@@ -17,7 +17,7 @@
     </li>
     
     <li class="px-nav-item {{ request()->is('rent*') ? 'active' : '' }}">
-        <a href="{{ route('rent.index') }}"><i class="px-nav-icon fa fa-wrench"></i>
+        <a href="{{ route('rent.index') }}"><i class="px-nav-icon fa fa-fax"></i>
             <span class="px-nav-label">Rent</span>
         </a>
     </li>

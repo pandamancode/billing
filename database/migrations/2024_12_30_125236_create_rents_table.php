@@ -25,6 +25,8 @@ class CreateRentsTable extends Migration
             $table->integer("harga_sebelum_diskon");
             $table->integer("harga_setelah_diskon");
             $table->enum("payment",['sudah','belum'])->default('belum');
+            $table->integer("bayar")->nullable();
+            $table->integer("kembalian")->nullable();
             $table->timestamps();
         });
     }

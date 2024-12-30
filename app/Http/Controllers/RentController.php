@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\RumahSakit;
-use App\Models\Ruangan;
-use App\Models\Poliklinik;
+use App\Models\Product;
+use App\Models\Category;
+use App\Models\Rent;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
-class RuanganController extends Controller
+class RentController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,24 +17,11 @@ class RuanganController extends Controller
      */
     public function index(Request $request)
     {
-        $title = "Data Ruangan";
-        $dataPerusahaan = RumahSakit::all();
-        if ($request->has('rs')) {
-            $rsId = $request->rs;
-            $request->session()->put('sess_rsId',$rsId);
-            $showTable = true;
-            $dataRuangan = Ruangan::where("rs_id",$request->rs)->get();
-        }else{
-            $rsId = null;
-            $showTable = false;
-            $dataRuangan= [];
-        }
-        return view('master.ruangan.data', compact(
+        $title = "Data Rent";
+        $rent = Rent::all();
+        return view('rent.data', compact(
             'title',
-            'dataPerusahaan',
-            'dataRuangan',
-            'showTable',
-            'rsId'
+            'rent',
         ));
     }
 
@@ -45,9 +32,10 @@ class RuanganController extends Controller
      */
     public function create()
     {
-        $judul = "Tambah Ruangan";
-        $poli = Poliklinik::all();
-        $view = view('master.ruangan.create', compact('judul','poli'))->render();
+        $judul = "Create New";
+        $category = Category::all();
+        $product = Product::all();
+        $view = view('rent.create', compact('judul','category','product'))->render();
         return response()->json([
             'success' => true,
             'html' => $view
@@ -62,11 +50,18 @@ class RuanganController extends Controller
      */
     public function store(Request $request)
     {
-        Ruangan::create([
-            'rs_id' => $request->session()->get('sess_rsId'),
-            'kode_ruangan' => $request->kode_ruangan,
-            'nama_ruangan' => $request->nama_ruangan,
-            // 'poli_id' => $request->poli_id,
+        $product = Product::findOrFail($request->produk);
+        $harga = $product->harga ?? 0;
+        Rent::create([
+            'produk_id' => $request->produk,
+            'customer' => $request->customer,
+            'tanggal' => $request->tanggal,
+            'jam_mulai' => $request->jam_mulai,
+            'qty' => $request->qty,
+            'harga_perjam' => $harga,
+            'diskon' => 0,
+            'harga_sebelum_diskon' => $harga * $request->qty,
+            'harga_setelah_diskon' => $harga * $request->qty,
         ]);
         return back()->with(['msg' => 'Berhasil Menambah Data', 'class' => 'alert-success']);
     }
@@ -79,9 +74,9 @@ class RuanganController extends Controller
      */
     public function show($id)
     {
-        $judul = "Hapus Ruangan";
-        $dataRuangan = Ruangan::where("id", $id)->first();
-        $view = view('master.ruangan.delete', compact('judul', 'dataRuangan'))->render();
+        $judul = "Payment";
+        $rent = Rent::findOrFail($id);
+        $view = view('rent.payment', compact('judul', 'rent'))->render();
         return response()->json([
             'success' => true,
             'html' => $view
@@ -96,10 +91,11 @@ class RuanganController extends Controller
      */
     public function edit($id)
     {
-        $judul = "Edit Ruangan";
-        $dataRuangan = Ruangan::where("id", $id)->first();
-        $poli = Poliklinik::all();
-        $view = view('master.ruangan.update', compact('judul', 'dataRuangan','poli'))->render();
+        $judul = "Edit";
+        $category = Category::all();
+        $product = Product::all();
+        $rent = Rent::findOrFail($id);
+        $view = view('rent.update', compact('judul','category','product','rent'))->render();
         return response()->json([
             'success' => true,
             'html' => $view
@@ -115,12 +111,29 @@ class RuanganController extends Controller
      */
     public function update(Request $request, $id)
     {
-        Ruangan::where("id", $id)->update([
-            'kode_ruangan' => $request->kode_ruangan,
-            'nama_ruangan' => $request->nama_ruangan,
-            // 'poli_id' => $request->poli_id,
-        ]);
-        return back()->with(['msg' => 'Berhasil Merubah Data', 'class' => 'alert-success']);
+        if($request->has('payment')){
+            Rent::where("id",$id)->update([
+                'bayar' => $request->bayar,
+                'kembalian' => $request->kembalian,
+                'payment' => 'sudah'
+            ]);
+            return back()->with(['msg' => 'Berhasil Melakukan Pembayaran', 'class' => 'alert-success']);
+        }else{
+            $product = Product::findOrFail($request->produk);
+            $harga = $product->harga ?? 0;
+            Rent::where("id",$id)->update([
+                'produk_id' => $request->produk,
+                'customer' => $request->customer,
+                'tanggal' => $request->tanggal,
+                'jam_mulai' => $request->jam_mulai,
+                'qty' => $request->qty,
+                'harga_perjam' => $harga,
+                'diskon' => 0,
+                'harga_sebelum_diskon' => $harga * $request->qty,
+                'harga_setelah_diskon' => $harga * $request->qty,
+            ]);
+            return back()->with(['msg' => 'Berhasil Merubah Data', 'class' => 'alert-success']);
+        }
     }
 
     /**

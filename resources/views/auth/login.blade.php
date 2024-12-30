@@ -132,8 +132,8 @@
                                         alt="Logo" height="120" />
                                 </a>
                                 <br /><br />
-                                <div class="font-size-18 m-t-1 line-height-2">CAT</div>
-                                <div class="font-size-12 m-t-1 line-height-1" style="font-family: lucida;color: yellow; font-style: italic">Computer Assist Test</div>
+                                <div class="font-size-18 m-t-1 line-height-2">Kalo Tech</div>
+                                <div class="font-size-12 m-t-1 line-height-1" style="font-family: lucida;color: yellow; font-style: italic">Rent System</div>
                                 <br /><br /><br />
                             </div>
                         </div>

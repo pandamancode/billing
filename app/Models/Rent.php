@@ -9,7 +9,7 @@ class Rent extends Model
 {
     use HasFactory;
     protected $guarded = []; 
-    public function produk(){
+    public function product(){
         return $this->belongsTo(Product::class, 'produk_id', 'id');
     }
 }

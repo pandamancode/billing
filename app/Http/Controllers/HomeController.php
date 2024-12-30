@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Kategorisoal;
-use App\Models\Pembayaran;
+use App\Models\Category;
+use App\Models\Product;
+use App\Models\Rent;
 use Illuminate\Http\Request;
 use Auth;
 use Hash;
@@ -21,12 +22,20 @@ class HomeController extends Controller
     public function index(Request $request)
     {
         $title = "Halaman Home";
-            //$totalPendaftar = User::where("level", "peserta")->count();
-            //$totalKategori = Kategorisoal::count();
-            return view('home.index', compact(
-                'title',
-            )
-            );
+        $totalCategory = Category::count();
+        $totalProduct = Product::count();
+        $totalRent = Rent::count();
+        $today = Carbon::now()->format('Y-m-d');
+        $transaksi = Rent::where("tanggal",$today)->orderBy("id","desc")->get();
+        return view('home.index', compact(
+            'title',
+            'totalCategory',
+            'totalProduct',
+            'totalRent',
+            'today',
+            'transaksi'
+        )
+        );
         
 
     }
