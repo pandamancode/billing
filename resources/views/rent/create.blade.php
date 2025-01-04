@@ -37,7 +37,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Product</label>
-                                <select name="produk" id="produk-id" class="form-control" required>
+                                <select name="produk" id="produk-id" onchange="pilihProduk()" class="form-control" required>
                                     <option value="" selected disabled>Pilih</option>
                                     @foreach($product as $key)
                                     <option value="{{ $key->id }}" class="{{ $key->kategori_id }}">{{ $key->nama_produk }}</option>
@@ -51,6 +51,7 @@
                         <input type="time" name="jam_mulai" class="form-control form-control-sm"
                             placeholder="Jam Mulai" autocomplete="off" required>
                     </div>
+                    
                     <div class="form-group">
                         <label>Qty<sup>Jam</sup></label>
                         <input type="number" name="qty" class="form-control form-control-sm"

@@ -17,13 +17,19 @@
     </li>
     
     <li class="px-nav-item {{ request()->is('rent*') ? 'active' : '' }}">
-        <a href="{{ route('rent.index') }}"><i class="px-nav-icon fa fa-fax"></i>
+        <a href="{{ route('rent.index') }}"><i class="px-nav-icon fa fa-tv"></i>
             <span class="px-nav-label">Rent</span>
         </a>
     </li>
 
+    <li class="px-nav-item {{ request()->is('penjualan*') ? 'active' : '' }}">
+        <a href="{{ route('penjualan.create') }}"><i class="px-nav-icon fa fa-fax"></i>
+            <span class="px-nav-label">Penjualan</span>
+        </a>
+    </li>
+
     <li class="px-nav-item {{ request()->is('laporan*') ? 'active' : '' }}">
-        <a href="#"><i class="px-nav-icon fa fa-print"></i>
+        <a href="{{ route('laporan.index') }}"><i class="px-nav-icon fa fa-print"></i>
             <span class="px-nav-label">Laporan</span>
         </a>
     </li>

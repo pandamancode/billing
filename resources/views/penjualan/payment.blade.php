@@ -5,60 +5,49 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title">{{ $judul }}</h4>
             </div>
-            <form method="post" action="{{ route('rent.update', $rent->id) }}" id="idForm">
+            <form method="post" action="{{ route('payment.update', $cart->no_transaksi) }}" id="idForm">
                 @csrf
                 @method('patch')
                 <div class="modal-body">
                     <input type="hidden" name="payment" value="ok">
                     <table class="table table-stripped">
                         <tr>
-                            <td width="30%">Tanggal</td>
+                            <td width="30%">No Transaksi</td>
                             <td width="5%">:</td>
-                            <td>{{ \Carbon\Carbon::parse($rent->tanggal)->format('d/m/Y') }}</td>
+                            <td>{{ $cart->no_transaksi }}</td>
+                        </tr>
+                        <tr>
+                            <td>Tanggal</td>
+                            <td>:</td>
+                            <td>{{ \Carbon\Carbon::parse($cart->tanggal)->format('d/m/Y') }}</td>
                         </tr>
                         <tr>
                             <td>Customer</td>
                             <td>:</td>
-                            <td>{{ $rent->customer }}</td>
+                            <td>{{ $cart->customer }}</td>
                         </tr>
                         <tr>
                             <td>Product</td>
                             <td>:</td>
-                            <td>{{ $rent->product->category->nama_kategori ?? '' }} -
-                                {{ $rent->product->nama_produk ?? '' }}</td>
-                        </tr>
-                        <tr>
-                            <td>Harga /Jam</td>
-                            <td>:</td>
-                            <td>Rp. {{ number_format($rent->harga_perjam, 0, ',', '.') }}</td>
-                        </tr>
-                        <tr>
-                            <td>Lama Sewa</td>
-                            <td>:</td>
-                            <td>{{ $rent->qty }} Jam</td>
-                        </tr>
-                        <tr>
-                            <td>Open Billing</td>
-                            <td>:</td>
                             <td>
-                                <select name="open_billing" onchange="billing()" id="open_billing" class="form-control">
-                                    <option value="tidak">Tidak</option>
-                                    <option value="ya">Ya</option>
-                                </select>
+                                @php
+                                    $total = 0;
+                                @endphp
+                                @foreach ($dataCart as $key)
+                                    @php
+                                        $total += $key->total;
+                                    @endphp
+                                    <li style="display: block;"><i class="fa fa-tag"></i> {{ $key->produk->nama_produk ?? '' }} | Qty: {{ $key->qty }} | Harga : {{ number_format($key->harga, 0, ',', '.') }}</li>
+                                @endforeach
                             </td>
                         </tr>
+
                         <tr>
                             <td>Total Harga</td>
                             <td>:</td>
                             <td>
-                                <span id="tidak-billing">Rp.
-                                    {{ number_format($rent->harga_setelah_diskon, 0, ',', '.') }}</span>
-                                <div id="ya-billing">
-                                    <input type="number" name="total_harga" id="total_harga"
-                                        value="{{ $rent->harga_setelah_diskon }}" class="form-control"
-                                        placeholder="Total Harga">
-                                </div>
-                                
+                                {{ number_format($total, 0, ',', '.') }}
+                                <input type="hidden" name="total_harga" value="{{ $total }}" id="hargaTotal">
                             </td>
                         </tr>
                         <tr>
@@ -77,6 +66,7 @@
                     </table>
                 </div>
                 <div class="modal-footer">
+                    <input type="hidden" name="tanggal" value="{{ $cart->tanggal }}">
                     <button type="submit" class="btn btn-sm btn-primary" disabled><i class="fa fa-save"></i>
                         Bayar Sekarang</button>
                     <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><i
@@ -86,36 +76,28 @@
         </div>
     </div>
 </div>
-<script>
-    function billing() {
-        var openBilling = $('#open_billing').val();
-        var totalHarga = $('#total_harga').val();
-
-        if (openBilling == 'ya') {
-            $('#tidak-billing').hide();
-            $('#ya-billing').show();
-        } else {
-            $('#tidak-billing').show();
-            $('#ya-billing').hide();
-            $('#total_harga').val(totalHarga); 
-        }
-    }
-
+<script type="text/javascript">
     $(document).ready(function() {
-        billing(); // Initial state for open_billing
-
         $('input[name="bayar"]').on('input', function() {
+            
             var bayar = parseInt($(this).val());
-            var totalHarga = parseInt($('#total_harga').val()); 
+            var totalHarga = parseInt($('#hargaTotal').val());
+
+            // Handle empty input case
+            if (isNaN(bayar)) {
+                $('input[name="kembalian"]').val('');
+                $('button[type="submit"]').prop('disabled', true);
+                return; // Exit the function if bayar is empty
+            }
+
             var kembalian = bayar - totalHarga;
 
             if (!isNaN(kembalian)) {
                 $('input[name="kembalian"]').val(kembalian);
             } else {
-                $('input[name="kembalian"]').val(''); 
+                $('input[name="kembalian"]').val('');
             }
 
-            // Enable/disable submit button based on kembalian
             if (kembalian >= 0) {
                 $('button[type="submit"]').prop('disabled', false);
             } else {

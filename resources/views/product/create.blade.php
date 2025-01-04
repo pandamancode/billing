@@ -10,7 +10,7 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label>Category</label>
-                        <select name="kategori" class="form-control" required>
+                        <select name="kategori" id="kategori_id" onchange="pilihKategori()" class="form-control" required>
                             <option value="" selected disabled>Pilih</option>
                             @foreach($category as $key)
                             <option value="{{ $key->id }}">{{ $key->nama_kategori }}</option>
@@ -22,6 +22,13 @@
                         <input type="text" name="produk" class="form-control form-control-sm"
                             placeholder="Nama Produk" autocomplete="off" required>
                     </div>
+
+                    <div class="form-group" id="modal">
+                        <label>Modal</label>
+                        <input type="number" name="modal" class="form-control form-control-sm"
+                            placeholder="Harga Modal" autocomplete="off">
+                    </div>
+
                     <div class="form-group">
                         <label>Price</label>
                         <input type="number" name="harga" class="form-control form-control-sm"
@@ -38,3 +45,14 @@
         </div>
     </div>
 </div>
+<script>
+    $('#modal').hide();
+    function pilihKategori() {
+        var pilih = $('#kategori_id').val();
+        if (pilih == '1') {
+            $('#modal').show();
+        } else {
+            $('#modal').hide();
+        }
+    }
+</script>

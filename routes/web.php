@@ -1,12 +1,15 @@
 <?php
 
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\LaporanContoller;
+use App\Http\Controllers\PaymentContoller;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RentController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AkunpenggunaController;
+use App\Http\Controllers\PenjualanContoller;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,5 +43,7 @@ Route::resource('/akun', AkunpenggunaController::class)->middleware(['auth'])->n
 Route::resource('/category',CategoryController::class)->middleware(['auth'])->names('category');
 Route::resource('/product',ProductController::class)->middleware(['auth'])->names('product');
 Route::resource('/rent',RentController::class)->middleware(['auth'])->names('rent');
-
+Route::resource('/penjualan',PenjualanContoller::class)->middleware(['auth'])->names('penjualan');
+Route::resource('/payment',PaymentContoller::class)->middleware(['auth'])->names('payment');
+Route::resource('/laporan',LaporanContoller::class)->middleware(['auth'])->names('laporan');
 require __DIR__.'/auth.php';

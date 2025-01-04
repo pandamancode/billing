@@ -51,6 +51,7 @@ class ProductController extends Controller
         Product::create([
             'kategori_id' => $request->kategori,
             'nama_produk' => $request->produk,
+            'modal' => $request->modal,
             'harga' => $request->harga,
         ]);
         return back()->with(['msg' => 'Berhasil Menambah Data', 'class' => 'alert-success']);

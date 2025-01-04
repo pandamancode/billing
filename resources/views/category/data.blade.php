@@ -39,15 +39,17 @@
                                     <tr class="odd gradeX">
                                         <td class="text-center">{{ $loop->iteration }}</td>
                                         <td class="text-center">
-                                            <a href="javascript:;" data-id="{{ $key->id }}"
-                                                class="btn btn-primary btn-xs btn-update">
-                                                <i class="fa fa-edit"></i>
-                                            </a>
+                                            @if ($key->id != 1)
+                                                <a href="javascript:;" data-id="{{ $key->id }}"
+                                                    class="btn btn-primary btn-xs btn-update">
+                                                    <i class="fa fa-edit"></i>
+                                                </a>
 
-                                            <a href="javascript:;" data-id="{{ $key->id }}"
-                                                class="btn btn-danger btn-xs btn-delete">
-                                                <i class="fa fa-trash"></i>
-                                            </a>
+                                                <a href="javascript:;" data-id="{{ $key->id }}"
+                                                    class="btn btn-danger btn-xs btn-delete">
+                                                    <i class="fa fa-trash"></i>
+                                                </a>
+                                            @endif
                                         </td>
                                         <td>{{ $key->nama_kategori }}</td>
                                     </tr>

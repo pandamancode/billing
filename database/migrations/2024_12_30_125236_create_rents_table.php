@@ -18,7 +18,7 @@ class CreateRentsTable extends Migration
             $table->unsignedBigInteger("produk_id");
             $table->string("customer");
             $table->date("tanggal");
-            $table->time("jam_mulai");
+            $table->datetime("jam_mulai");
             $table->integer("qty");
             $table->integer("harga_perjam");
             $table->integer("diskon");

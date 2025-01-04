@@ -12,7 +12,7 @@
                     <input type="hidden" name="payment" value="ok">
                     <table class="table table-stripped">
                         <tr>
-                            <td width="30%">Tanggal</td>
+                            <td width="25%">Tanggal</td>
                             <td width="5%">:</td>
                             <td>{{ \Carbon\Carbon::parse($rent->tanggal)->format('d/m/Y') }}</td>
                         </tr>
@@ -54,11 +54,12 @@
                                 <span id="tidak-billing">Rp.
                                     {{ number_format($rent->harga_setelah_diskon, 0, ',', '.') }}</span>
                                 <div id="ya-billing">
-                                    <input type="number" name="total_harga" id="total_harga"
+                                    <input type="number" name="total_harga_billing" id="total_harga_billing"
                                         value="{{ $rent->harga_setelah_diskon }}" class="form-control"
                                         placeholder="Total Harga">
                                 </div>
-                                
+                                <input type="hidden" name="total_harga" class="form-control"
+                                    value="{{ $rent->harga_setelah_diskon }}">
                             </td>
                         </tr>
                         <tr>
@@ -87,40 +88,83 @@
     </div>
 </div>
 <script>
-    function billing() {
-        var openBilling = $('#open_billing').val();
-        var totalHarga = $('#total_harga').val();
+    $('#tidak-billing').show();
+    $('#ya-billing').hide();
 
-        if (openBilling == 'ya') {
+    function billing() {
+        var status = $('#open_billing').find(":selected").val();
+        if (status == 'ya') {
             $('#tidak-billing').hide();
             $('#ya-billing').show();
+            updateTotalHargaBilling();
         } else {
             $('#tidak-billing').show();
             $('#ya-billing').hide();
-            $('#total_harga').val(totalHarga); 
         }
     }
 
-    $(document).ready(function() {
-        billing(); // Initial state for open_billing
+    //document.addEventListener("DOMContentLoaded", function () {
+    // Pastikan fungsi berjalan setelah modal terbuka
+    $('#modal_show').on('shown.bs.modal', function() {
+        // Ambil elemen input berdasarkan name
+        const totalHargaInput = document.querySelector("input[name='total_harga']");
+        var totalHargaBillingInput = document.querySelector("input[name='total_harga_billing']");
+        const bayarInput = document.querySelector("input[name='bayar']");
+        const kembalianInput = document.querySelector("input[name='kembalian']");
+        const submitButton = document.querySelector("button[type='submit']");
 
-        $('input[name="bayar"]').on('input', function() {
-            var bayar = parseInt($(this).val());
-            var totalHarga = parseInt($('#total_harga').val()); 
-            var kembalian = bayar - totalHarga;
+        const status = $('#open_billing').find(":selected").val();
 
-            if (!isNaN(kembalian)) {
-                $('input[name="kembalian"]').val(kembalian);
-            } else {
-                $('input[name="kembalian"]').val(''); 
-            }
-
-            // Enable/disable submit button based on kembalian
+        function updateButtonState() {
+            const kembalian = parseFloat(kembalianInput.value);
             if (kembalian >= 0) {
-                $('button[type="submit"]').prop('disabled', false);
+                submitButton.disabled = false;
             } else {
-                $('button[type="submit"]').prop('disabled', true);
+                submitButton.disabled = true;
             }
-        });
+        }
+
+        function updateTotalHargaBilling() {
+            const hargaBilling = $('#total_harga_billing').val();
+
+            totalHargaBillingInput.value = hargaBilling; // Update nilai total_harga_billing
+        }
+
+        if (status == 'ya') {
+            
+            // Tambahkan event listener ke input bayar
+            bayarInput.addEventListener("input", function() {
+                updateTotalHargaBilling();
+                // Ambil nilai total harga dan bayar
+                const totalHarga = parseFloat(totalHargaInput.value) || 0; // Default ke 0 jika kosong
+                const totalHargaBilling = parseFloat(totalHargaBillingInput.value) || 0;
+                const bayar = parseFloat(bayarInput.value) || 0;
+
+                // Hitung kembalian
+                let kembalian = bayar - totalHargaBilling;
+
+                // Tampilkan hasil di input kembalian
+                //kembalianInput.value = kembalian >= 0 ? kembalian : 0;
+                kembalianInput.value = kembalian;
+                updateButtonState();
+            });
+        } else {
+            // Tambahkan event listener ke input bayar
+            bayarInput.addEventListener("input", function() {
+                // Ambil nilai total harga dan bayar
+                const totalHarga = parseFloat(totalHargaInput.value) || 0; // Default ke 0 jika kosong
+                const totalHargaBilling = parseFloat(totalHargaBillingInput.value) || 0;
+                const bayar = parseFloat(bayarInput.value) || 0;
+
+                // Hitung kembalian
+                let kembalian = bayar - totalHarga;
+
+                // Tampilkan hasil di input kembalian
+                //kembalianInput.value = kembalian >= 0 ? kembalian : 0;
+                kembalianInput.value = kembalian;
+                updateButtonState();
+            });
+        }
+        updateButtonState();
     });
 </script>

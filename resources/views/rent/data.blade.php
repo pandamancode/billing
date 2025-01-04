@@ -49,16 +49,20 @@
                                             <button class="btn btn-primary btn-xs" disabled>
                                                 <i class="fa fa-edit"></i> Edit
                                             </button>
+                                            <button class="btn btn-success btn-xs" disabled>
+                                                <i class="fa fa-fax"></i> Bayar
+                                            </button>
                                             @else
                                             <a href="javascript:;" data-id="{{ $key->id }}"
                                                 class="btn btn-primary btn-xs btn-update">
                                                 <i class="fa fa-edit"></i> Edit
                                             </a>
-                                            @endif
                                             <a href="javascript:;" data-id="{{ $key->id }}"
                                                 class="btn btn-success btn-xs btn-payment">
                                                 <i class="fa fa-fax"></i> Bayar
                                             </a>
+                                            @endif
+                                            
                                         </td>
                                         <td class="text-center">
                                             <span>

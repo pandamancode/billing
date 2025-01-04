@@ -33,7 +33,7 @@ class RentController extends Controller
     public function create()
     {
         $judul = "Create New";
-        $category = Category::all();
+        $category = Category::where("id","<>","1")->get();
         $product = Product::all();
         $view = view('rent.create', compact('judul','category','product'))->render();
         return response()->json([
@@ -56,7 +56,7 @@ class RentController extends Controller
             'produk_id' => $request->produk,
             'customer' => $request->customer,
             'tanggal' => $request->tanggal,
-            'jam_mulai' => $request->jam_mulai,
+            'jam_mulai' => $request->tanggal." ".$request->jam_mulai,
             'qty' => $request->qty,
             'harga_perjam' => $harga,
             'diskon' => 0,
@@ -92,7 +92,7 @@ class RentController extends Controller
     public function edit($id)
     {
         $judul = "Edit";
-        $category = Category::all();
+        $category = Category::where("id","<>","1")->get();
         $product = Product::all();
         $rent = Rent::findOrFail($id);
         $view = view('rent.update', compact('judul','category','product','rent'))->render();
@@ -112,11 +112,23 @@ class RentController extends Controller
     public function update(Request $request, $id)
     {
         if($request->has('payment')){
-            Rent::where("id",$id)->update([
-                'bayar' => $request->bayar,
-                'kembalian' => $request->kembalian,
-                'payment' => 'sudah'
-            ]);
+            if($request->open_billing=='ya'){
+                Rent::where("id",$id)->update([
+                    'open_billing' => $request->open_billing,
+                    'harga_setelah_diskon' => $request->total_harga,
+                    'bayar' => $request->bayar,
+                    'kembalian' => $request->kembalian,
+                    'payment' => 'sudah'
+                ]);
+            }else{
+                Rent::where("id",$id)->update([
+                    'open_billing' => $request->open_billing,
+                    'bayar' => $request->bayar,
+                    'kembalian' => $request->kembalian,
+                    'payment' => 'sudah'
+                ]);
+            }
+            
             return back()->with(['msg' => 'Berhasil Melakukan Pembayaran', 'class' => 'alert-success']);
         }else{
             $product = Product::findOrFail($request->produk);
@@ -144,7 +156,6 @@ class RentController extends Controller
      */
     public function destroy($id)
     {
-        Ruangan::where("id", $id)->delete();
-        return back()->with(['msg' => 'Berhasil Menghapus Data', 'class' => 'alert-success']);
+        //
     }
 }

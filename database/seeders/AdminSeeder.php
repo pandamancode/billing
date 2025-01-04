@@ -24,5 +24,13 @@ class AdminSeeder extends Seeder
                 ],
             ]
         );
+
+        DB::table('categories')->insert(
+            [
+                [
+                    'nama_kategori'  => 'MAKANAN & MINUMAN',
+                ],
+            ]
+        );
     }
 }

@@ -37,4 +37,12 @@
             @include('home.rent')
         </div>
     </div>
+
+    @push('js')
+    <script>
+        setInterval(function(){
+          location.reload();
+        }, 60000); // Reload setiap 30 detik (30000 milidetik)
+      </script>    
+    @endpush
 @endsection
